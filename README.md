@@ -1,28 +1,66 @@
-<p align="center"><a href="https://autoklose.com" target="_blank"><img src="https://app.autoklose.com/images/svg/autoklose-logo-white.svg" width="400"></a></p>
+## Installation
 
-## Instructions
-The repository for the assignment is public and Github does not allow the creation of private forks for public repositories.
+### Clone
 
-The correct way of creating a private fork by duplicating the repo is documented here.
+Clone the repository:
 
-For this assignment the commands are:
+```
+git clone git@github.com:nikfedorov/laravel-9.git
+```
 
-Create a bare clone of the repository.
+### Build
 
-git clone --bare git@github.com:autoklose/laravel-9.git
-Create a new private repository on Github and name it laravel-9.
+Make sure you have docker installed and running.
 
-Mirror-push your bare clone to your new repository.
+To pull project images and setup containers:
 
-Replace <your_username> with your actual Github username in the url below.
+```shell
+make up
+```
 
-cd laravel-9.git
-git push --mirror git@github.com:<your_username>/laravel-9.git
-Remove the temporary local repository you created in step 1.
+Make sure to keep Laravel Horizon running. If in some case if exited or needs restarting please run:
 
-cd ..
-rm -rf laravel-9.git
-You can now clone your laravel-9 repository on your machine (in my case in the code folder).
+```shell
+make horizon
+```
 
-cd ~/code
-git clone git@github.com:<your_username>/laravel-9.git
+### Test
+
+To run the testsuite use:
+
+```
+make test
+```
+
+### Usage
+
+To use the application please go to [Test Route](http://localhost/test). It will give you a curl command that you should run on your terminal.
+
+Example:
+
+```shell
+curl -XPOST -H "Content-type: application/json" -d '
+    {
+        "emails": [
+            {
+                "email": "lmetz@collier.net",
+                "subject": "Fully-configurable national opensystem",
+                "body": "Autem rerum voluptate harum."
+            }
+        ]
+    }' 'http://localhost/api/1/send?api_token=E3iXwtNSmE'
+```
+
+After you run this command you can check out [Mailpit](http://localhost:8025) to see the sent emails.
+
+You can also check out [Laravel Horizon](http://localhost/horizon) to see the jobs that are being processed.
+
+The list of sent emails can be found on [list route](http://localhost/api/list).
+
+### Shut down
+
+To shut down containers run:
+
+```
+make down
+```

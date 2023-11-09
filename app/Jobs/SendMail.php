@@ -20,33 +20,43 @@ class SendMail implements ShouldQueue
 
     /**
      * Create a new job instance.
-     *
-     * @return void
      */
     public function __construct(
         public User $sender,
         public MailObject $mail
-    ) {}
+    ) {
+        $this->onQueue('send-mail');
+    }
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
-    public function handle(ElasticsearchHelperInterface $elasticsearchHelper, RedisHelperInterface $redisHelper)
+    public function handle(ElasticsearchHelperInterface $elasticsearchHelper, RedisHelperInterface $redisHelper): void
     {
         // compose an email
         $email = (new MailDispatch($this->mail->body))
-            ->subject($this->mail->subject);
+            ->subject($this->mail->subject)
+            ->onQueue('emails');
 
         // send an email
         Mail::to($this->mail->email)
-            ->send($email);
+            ->queue($email);
 
         // save data to elasticsearch
-        $elasticsearchHelper->storeEmail($this->mail->body, $this->mail->subject, $this->mail->email);
+        $elasticsearchHelper->storeEmail(
+            toEmailAddress: $this->mail->email,
+            messageSubject: $this->mail->subject,
+            messageBody: $this->mail->body,
+        );
 
         // save data to redis
-        $redisHelper->storeRecentMessage($this->mail->subject, $this->mail->email);
+        $redisHelper->storeRecentMessage(
+            toEmailAddress: $this->mail->email,
+            messageSubject: $this->mail->subject,
+        );
+
+        // memorize last email sent time
+        $this->sender->last_email_sent_at = now();
+        $this->sender->save();
     }
 }

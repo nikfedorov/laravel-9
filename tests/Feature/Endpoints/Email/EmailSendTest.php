@@ -43,7 +43,7 @@ class EmailSendTest extends TestCase
             ]);
 
         // assert
-        $response->assertOk();
+        $response->assertNoContent();
 
         // assert job created
         Queue::assertPushed(function (SendMail $job) use ($user, $mail) {

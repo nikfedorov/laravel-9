@@ -22,7 +22,17 @@ if [ ! -d ./vendor ]; then
     # generate application key
     vendor/bin/sail artisan key:generate
 
+    # take a nap
+    echo "Waiting for the DB to come up. Sleeping 10 seconds..."
+    sleep 10
+
+    # migrate the database
+    vendor/bin/sail artisan migrate
+
 else
     # bring containers up
     vendor/bin/sail up -d
 fi
+
+# start laravel horizon
+vendor/bin/sail artisan horizon

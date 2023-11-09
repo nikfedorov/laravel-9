@@ -5,7 +5,6 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -21,42 +20,28 @@ class MailDispatch extends Mailable implements ShouldQueue
      */
     public function __construct(
         public string $body,
-    ) {}
+    ) {
+    }
 
     /**
      * Get the message envelope.
-     *
-     * @return \Illuminate\Mail\Mailables\Envelope
      */
-    public function envelope()
+    public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address('jeffrey@example.com', 'Jeffrey Way'),
             subject: $this->subject,
         );
     }
 
     /**
      * Get the message content definition.
-     *
-     * @return \Illuminate\Mail\Mailables\Content
      */
-    public function content()
+    public function content(): Content
     {
         return new Content(
-            markdown: 'emails.dispatch',with: [
+            markdown: 'emails.dispatch', with: [
                 'body' => $this->body,
             ],
         );
-    }
-
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array
-     */
-    public function attachments()
-    {
-        return [];
     }
 }

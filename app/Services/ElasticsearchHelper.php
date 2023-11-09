@@ -25,9 +25,6 @@ class ElasticsearchHelper implements ElasticsearchHelperInterface
     /**
      * Store the email's message body, subject and to address inside elasticsearch.
      *
-     * @param  string  $messageBody
-     * @param  string  $messageSubject
-     * @param  string  $toEmailAddress
      * @return mixed - Return the id of the record inserted into Elasticsearch
      */
     public function storeEmail(string $messageBody, string $messageSubject, string $toEmailAddress): mixed
@@ -49,11 +46,30 @@ class ElasticsearchHelper implements ElasticsearchHelperInterface
      */
     public function getEmails()
     {
-        $params = [
-            'index' => $this->prefix.'emails',
-        ];
+        // try to get emails
+        try {
 
-        return Elasticsearch::search($params);
+            // request elasticsearch
+            $data = Elasticsearch::search([
+                'index' => $this->prefix.'emails',
+            ]);
+
+            // collect and map result into an array
+            return collect($data['hits']['hits'])
+                ->map(function ($item) {
+                    return [
+                        'email' => $item['_source']['email'],
+                        'subject' => $item['_source']['subject'],
+                        'body' => $item['_source']['body'],
+                    ];
+                })
+                ->toArray();
+        }
+
+        // on error return empty array
+        catch (\Exception $e) {
+            return [];
+        }
     }
 
     /**
@@ -61,10 +77,11 @@ class ElasticsearchHelper implements ElasticsearchHelperInterface
      */
     public function deleteAll()
     {
-        $params = [
-            'index' => $this->prefix.'emails',
-        ];
-
-        return Elasticsearch::indices()->delete($params);
+        try {
+            Elasticsearch::indices()->delete([
+                'index' => $this->prefix.'emails',
+            ]);
+        } catch (\Exception $e) {
+        }
     }
 }

@@ -24,3 +24,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('{user}/send', [EmailController::class, 'send'])
     ->name('api.send')
     ->middleware(ValidateApiToken::class);
+
+// list emails
+Route::get('list', [EmailController::class, 'list'])
+    ->name('api.list');

@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Utilities\Contracts\RedisHelperInterface;
-use Elasticsearch;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Str;
 
@@ -28,9 +27,6 @@ class RedisHelper implements RedisHelperInterface
      * Store the id of a message along with a message subject in Redis.
      *
      * @param  mixed  $id
-     * @param  string  $messageSubject
-     * @param  string  $toEmailAddress
-     * @return void
      */
     public function storeRecentMessage(string $messageSubject, string $toEmailAddress): void
     {
@@ -55,6 +51,7 @@ class RedisHelper implements RedisHelperInterface
     public function get($id)
     {
         $id = Str::replace(config('database.redis.options.prefix'), '', $id);
+
         return json_decode(Redis::get($id));
     }
 

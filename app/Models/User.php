@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Jobs\MotivateUser;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -36,21 +36,15 @@ class User extends Authenticatable
     ];
 
     /**
-     * The attributes that should be cast as dates.
-     *
-     * @var array<string, string>
-     */
-    protected $dates = [
-        'email_verified_at',
-        'last_email_sent_at'
-    ];
-
-    /**
      * The attributes that should be cast.
      *
      * @var array<string, string>
      */
-    protected $casts = [];
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'last_email_sent_at' => 'datetime',
+        'password' => 'hashed',
+    ];
 
     /**
      * Motivate the user
@@ -64,17 +58,13 @@ class User extends Authenticatable
 
     /**
      * Create a greeting that we can display to the user.
-     *
-     * @param  bool  $smallTalk
-     * @param  string  $salutation
-     * @return string
      */
-    public function getGreeting(bool $smallTalk = true, string $salutation): string
+    public function getGreeting(bool $smallTalk, string $salutation): string
     {
         $greeting = "$salutation, {$this->name}!";
 
         if ($smallTalk) {
-            $greeting .= " Lovely weather we are having!";
+            $greeting .= ' Lovely weather we are having!';
         }
 
         return $greeting;
@@ -83,7 +73,7 @@ class User extends Authenticatable
     /**
      * Scope users by api_token.
      */
-    public function scopeWithApiToken(Builder $query, string $apiToken = null)
+    public function scopeWithApiToken(Builder $query, string $apiToken = null): void
     {
         $query->where('api_token', $apiToken);
     }

@@ -5,13 +5,15 @@ namespace App\Http\Controllers;
 use App\Http\Requests\EmailSendRequest;
 use App\Jobs\SendMail;
 use App\Objects\Mail;
+use App\Utilities\Contracts\ElasticsearchHelperInterface;
+use Illuminate\Http\Response;
 
 class EmailController extends Controller
 {
     /**
      * Send a list of emails.
      */
-    public function send(EmailSendRequest $request)
+    public function send(EmailSendRequest $request): Response
     {
         // obtain user from request
         $sender = $request->user();
@@ -21,11 +23,18 @@ class EmailController extends Controller
             $mail = new Mail($email);
             SendMail::dispatch($sender, $mail);
         }
+
+        // return nocontent
+        return response()->noContent();
     }
 
-    //  TODO - BONUS: implement list method
-    public function list()
+    /**
+     * List sent emails.
+     */
+    public function list(ElasticsearchHelperInterface $elasticsearchHelper)
     {
-
+        return [
+            'emails' => $elasticsearchHelper->getEmails(),
+        ];
     }
 }
