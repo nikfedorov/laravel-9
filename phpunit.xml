@@ -3,6 +3,7 @@
          xsi:noNamespaceSchemaLocation="./vendor/phpunit/phpunit/phpunit.xsd"
          bootstrap="vendor/autoload.php"
          colors="true"
+         stopOnFailure="true"
 >
     <testsuites>
         <testsuite name="Feature">
@@ -23,5 +24,7 @@
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
+        <env name="ELASTICSEARCH_PREFIX" value="testing_"/>
+        <env name="REDIS_PREFIX" value="testing_"/>
     </php>
 </phpunit>

@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
+use App\Jobs\MotivateUser;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-
-use App\Jobs\MotivateUser;
 
 class User extends Authenticatable
 {
@@ -78,5 +78,13 @@ class User extends Authenticatable
         }
 
         return $greeting;
+    }
+
+    /**
+     * Scope users by api_token.
+     */
+    public function scopeWithApiToken(Builder $query, string $apiToken = null)
+    {
+        $query->where('api_token', $apiToken);
     }
 }

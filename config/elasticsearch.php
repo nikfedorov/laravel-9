@@ -14,6 +14,12 @@ return [
     'defaultConnection' => 'default',
 
     /**
+     * Prefix for Elasticsearch indexes.
+     */
+
+    'prefix' => env('ELASTICSEARCH_PREFIX', ''),
+
+    /**
      * These are the connection parameters used when building a client.
      */
 

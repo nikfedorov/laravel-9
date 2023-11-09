@@ -2,25 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Utilities\Contracts\ElasticsearchHelperInterface;
-use App\Utilities\Contracts\RedisHelperInterface;
+use App\Http\Requests\EmailSendRequest;
+use App\Jobs\SendMail;
+use App\Objects\Mail;
 
 class EmailController extends Controller
 {
-    // TODO: finish implementing send method
-    public function send()
+    /**
+     * Send a list of emails.
+     */
+    public function send(EmailSendRequest $request)
     {
+        // obtain user from request
+        $sender = $request->user();
 
-
-        /** @var ElasticsearchHelperInterface $elasticsearchHelper */
-        $elasticsearchHelper = app()->make(ElasticsearchHelperInterface::class);
-        // TODO: Create implementation for storeEmail and uncomment the following line
-        // $elasticsearchHelper->storeEmail(...);
-
-        /** @var RedisHelperInterface $redisHelper */
-        $redisHelper = app()->make(RedisHelperInterface::class);
-        // TODO: Create implementation for storeRecentMessage and uncomment the following line
-        // $redisHelper->storeRecentMessage(...);
+        // send emails on user behalf
+        foreach ($request->input('emails') as $email) {
+            $mail = new Mail($email);
+            SendMail::dispatch($sender, $mail);
+        }
     }
 
     //  TODO - BONUS: implement list method

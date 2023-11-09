@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\EmailController;
+use App\Http\Middleware\ValidateApiToken;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +19,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+// send emails
+Route::post('{user}/send', [EmailController::class, 'send'])
+    ->name('api.send')
+    ->middleware(ValidateApiToken::class);
